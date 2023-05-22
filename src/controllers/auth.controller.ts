@@ -1,6 +1,8 @@
 import { Controller, Post, Req } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
+import { FastifyRequest } from 'fastify';
 import { z } from 'zod';
+
+import { AuthService } from '../services/auth.service';
 import { DiscordService } from '../services/discord.service';
 
 @Controller('auth')
@@ -11,7 +13,7 @@ export class AuthController {
   ) {}
 
   @Post('discord')
-  async getUser(@Req() request: Request) {
+  async getUser(@Req() request: FastifyRequest) {
     const bodySchema = z.object({
       code: z.string(),
     });
