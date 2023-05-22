@@ -13,6 +13,7 @@ export class AuthService {
     private discord: DiscordService,
     private jwtService: JwtService,
   ) {}
+
   async getUser({ access_token, expires_in, refresh_token }: UserDTO) {
     const user = await this.discord.getUser(access_token);
 
