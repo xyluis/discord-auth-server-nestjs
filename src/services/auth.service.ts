@@ -26,11 +26,11 @@ export class AuthService {
 
     const token = this.jwtService.sign(
       {
-        tag: `${user.username}#${user.discriminator}`,
+        tag: user.username,
         decorationUrl:
           user.avatar_decoration &&
           `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration}.png?size=160&passthrough=true`,
-        avatarUrl: getUserAvatarUrl(user.id, user.discriminator, user.avatar),
+        avatarUrl: getUserAvatarUrl(user.id, user.avatar),
       },
       {
         subject: user.id,

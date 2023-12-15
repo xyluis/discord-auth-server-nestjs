@@ -45,9 +45,8 @@ export class DiscordService {
     const userSchema = z.object({
       id: z.string(),
       username: z.string(),
-      discriminator: z.string(),
-      avatar: z.string().nullable(),
-      avatar_decoration: z.string().nullable(),
+      avatar: z.string().optional(),
+      avatar_decoration: z.string().optional(),
     });
 
     return userSchema.parse(data);
