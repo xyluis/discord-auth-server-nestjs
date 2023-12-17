@@ -13,15 +13,15 @@ async function bootstrap() {
     new FastifyAdapter(),
   )
 
+  app.enableCors({
+    origin: '*',
+    methods: '*',
+  })
   app.setGlobalPrefix('api')
   app.enableVersioning({
     type: VersioningType.URI,
   })
 
-  app.enableCors({
-    origin: '*',
-    methods: '*',
-  })
 
   await app.listen(process.env.PORT || 3333, '0.0.0.0')
 }
