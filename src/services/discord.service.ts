@@ -45,6 +45,7 @@ export class DiscordService {
     const userSchema = z.object({
       id: z.string(),
       username: z.string(),
+      global_name: z.string().optional(),
       discriminator: z.string(),
       avatar: z.string().nullable(),
       avatar_decoration: z.string().optional(),
@@ -54,44 +55,53 @@ export class DiscordService {
   }
 
   async getGuilds(token: string) {
-    const [guildsResponse, botGuildsResponse] = await Promise.all([
-      this.api.get('/users/@me/guilds', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      this.api.get('/users/@me/guilds', {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
-        },
-      }),
-    ])
+    try {
+      const [guildsResponse, /* botGuildsResponse */] = await Promise.all([
+        this.api.get('/users/@me/guilds', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        /* this.api.get('/users/@me/guilds', {
+          headers: {
+            Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+          },
+        }), */
+      ])
 
-    const guildSchema = z.object({
-      id: z.string(),
-      name: z.string(),
-      owner: z.boolean(),
-      icon: z.string().nullable(),
-      permissions: z.coerce.number(),
-    })
+      const guildSchema = z.object({
+        id: z.string(),
+        name: z.string(),
+        owner: z.boolean(),
+        icon: z.string().nullable(),
+        permissions: z.coerce.number(),
+      })
 
-    const guildsSchema = z.array(guildSchema)
+      const guildsSchema = z.array(guildSchema)
 
-    const userGuilds = guildsSchema.parse(guildsResponse.data)
-    const botGuilds = guildsSchema.parse(botGuildsResponse.data)
+      const userGuilds = guildsSchema.parse(guildsResponse.data)
+      /* const botGuilds = guildsSchema.parse(botGuildsResponse.data) */
 
-    const guilds =
-      userGuilds
-        .filter((guild) => {
-          return botGuilds.find((botGuild) => botGuild.id === guild.id)
-        })
+      const guilds =
+        userGuilds
         .map((guild) => ({
           ...guild,
           canManage: (guild.permissions & (1 << 5)) !== 0 || guild.owner,
           iconUrl: getGuildIconUrl(guild.id, guild.icon),
-        })) ?? []
+        }))
+         /*  .filter((guild) => {
+            return botGuilds.find((botGuild) => botGuild.id === guild.id)
+          })
+          .map((guild) => ({
+            ...guild,
+            canManage: (guild.permissions & (1 << 5)) !== 0 || guild.owner,
+            iconUrl: getGuildIconUrl(guild.id, guild.icon),
+          })) ?? [] */
 
-    return guilds
+      return guilds
+    } catch (e) {
+      return []
+    }
   }
 
   async refreshAccessToken(refreshToken: string) {

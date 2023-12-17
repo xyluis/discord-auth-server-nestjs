@@ -6,12 +6,12 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common'
-import { FastifyRequest } from 'fastify'
 
 import { AuthGuard } from '../guards/auth.guard'
 import { DiscordService } from '../services/discord.service'
 import { LoginService } from '../services/login.service'
 import { isTokenExpired } from '../utils/is-token-expired.util'
+import { Request } from 'express'
 
 @Controller()
 export class ApiController {
@@ -23,7 +23,7 @@ export class ApiController {
   @UseGuards(AuthGuard)
   @Get('/guilds/@me')
   @Version('1')
-  async getGuilds(@Req() request: FastifyRequest) {
+  async getGuilds(@Req() request: Request) {
     let login = await this.loginService.getLoginById(request.user.sub)
 
     if (login && isTokenExpired(login.expiresIn)) {

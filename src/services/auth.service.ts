@@ -26,7 +26,8 @@ export class AuthService {
 
     const token = this.jwtService.sign(
       {
-        tag: user.username,
+        username: user.username,
+        globalName: user.global_name ?? 'User',
         decorationUrl:
           user.avatar_decoration &&
           `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration}.png?size=160&passthrough=true`,

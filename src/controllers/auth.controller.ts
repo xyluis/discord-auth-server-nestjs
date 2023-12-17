@@ -2,18 +2,17 @@ import {
   Controller,
   Get,
   Headers,
-  Post,
   Req,
   Res,
   Version,
 } from '@nestjs/common'
-import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { URL } from 'node:url'
 
 import { AuthService } from '../services/auth.service'
 import { DiscordService } from '../services/discord.service'
 import { JwtService } from '@nestjs/jwt'
+import { Request, Response } from 'express'
 
 @Controller('auth')
 export class AuthController {
@@ -23,33 +22,11 @@ export class AuthController {
     private readonly jwtService: JwtService,
   ) {}
 
-  @Post('discord')
-  @Version('1')
-  async getUser(@Req() request: FastifyRequest) {
-    const bodySchema = z.object({
-      code: z.string(),
-    })
-
-    const { code } = bodySchema.parse(request.body)
-
-    const {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      expires_in: expiresIn,
-    } = await this.discordService.getAccessToken(code)
-
-    return this.authService.getUser({
-      accessToken,
-      expiresIn,
-      refreshToken,
-    })
-  }
-
   @Get('discord')
   @Version('1')
   async authenticate(
-    @Req() request: FastifyRequest,
-    @Res() reply: FastifyReply,
+    @Req() request: Request,
+    @Res() response: Response,
   ) {
     const querySchema = z.object({
       code: z.string().optional(),
@@ -59,7 +36,7 @@ export class AuthController {
     const { code } = querySchema.parse(request.query)
 
     if (!code) {
-      return reply
+      return response
       .status(302)
       .redirect(redirectUrl.href)
     }
@@ -79,7 +56,7 @@ export class AuthController {
     redirectUrl.searchParams.append('token', token)
     redirectUrl.searchParams.append('expiration', expiration.toString())
 
-    return reply
+    return response
       .status(302)
       .redirect(redirectUrl.href)
   }

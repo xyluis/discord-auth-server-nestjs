@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 
@@ -9,6 +9,7 @@ import { PrismaService } from './services/prisma.service'
 import { LoginService } from './services/login.service'
 import { DiscordService } from './services/discord.service'
 import { HealthController } from './controllers/health.controller'
+import { LoggerMiddleware } from './middlewares/logger.middleware'
 
 @Module({
   imports: [
@@ -21,4 +22,8 @@ import { HealthController } from './controllers/health.controller'
   controllers: [HealthController, AuthController, ApiController],
   providers: [AuthService, PrismaService, LoginService, DiscordService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*')
+  }
+}

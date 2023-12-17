@@ -5,7 +5,8 @@ export interface UserDTO {
 }
 
 export interface JWTUserDTO {
-  tag: string
+  username: string
+  globalName: string | null
   decorationUrl: string | null
   avatarUrl: string
   sub: string
