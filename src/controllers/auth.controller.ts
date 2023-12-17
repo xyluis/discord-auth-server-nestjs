@@ -51,10 +51,18 @@ export class AuthController {
     @Res() reply: FastifyReply,
   ) {
     const querySchema = z.object({
-      code: z.string(),
+      code: z.string().optional(),
     })
 
     const { code } = querySchema.parse(request.query)
+
+    if (!code) {
+      return reply
+      .status(302)
+      .redirect(
+        process.env.CLIENT_REDIRECT_URI
+      )
+    }
 
     const {
       access_token: accessToken,
