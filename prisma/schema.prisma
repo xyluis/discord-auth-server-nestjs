@@ -11,8 +11,10 @@ datasource db {
 }
 
 model Login {
-  id            String @unique
-  access_token  String
-  refresh_token String
-  expires_in    Int
+  id           String @unique
+  accessToken  String @map("access_token")
+  refreshToken String @map("refresh_token")
+  expiresIn    Int    @map("expires_in")
+
+  @@map("logins")
 }

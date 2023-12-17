@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 
-import { getUserAvatarUrl } from '../utils/get-user-avatar-url.util';
-import { LoginService } from './login.service';
-import { UserDTO } from '../dtos/user.dto';
-import { DiscordService } from './discord.service';
+import { getUserAvatarUrl } from '../utils/get-user-avatar-url.util'
+import { LoginService } from './login.service'
+import { UserDTO } from '../dtos/user.dto'
+import { DiscordService } from './discord.service'
 
 @Injectable()
 export class AuthService {
@@ -14,15 +14,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async getUser({ access_token, expires_in, refresh_token }: UserDTO) {
-    const user = await this.discord.getUser(access_token);
+  async getUser({ accessToken, expiresIn, refreshToken }: UserDTO) {
+    const user = await this.discord.getUser(accessToken)
 
     await this.login.getLogin({
-      access_token,
-      expires_in,
+      accessToken,
+      expiresIn,
       id: user.id,
-      refresh_token,
-    });
+      refreshToken,
+    })
 
     const token = this.jwtService.sign(
       {
@@ -34,10 +34,10 @@ export class AuthService {
       },
       {
         subject: user.id,
-        expiresIn: expires_in,
+        expiresIn,
       },
-    );
+    )
 
-    return { token, expiration: expires_in };
+    return { token, expiration: expiresIn }
   }
 }

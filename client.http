@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:3333/api/v1
+
+# @name verify_token
+OPTIONS {{baseUrl}}/auth/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0YWciOiJsdWlzLmZlbGlwZSIsImF2YXRhclVybCI6Imh0dHBzOi8vY2RuLmRpc2NvcmRhcHAuY29tL2F2YXRhcnMvNDcxMzMzNzIyODEwMDg5NDkyL2ZlMmMyNDNmOWU4YzY0ODk1ZDBmNTE2NGM2OWFhYzNiLnBuZyIsImlhdCI6MTcwMjc2NTQwMSwiZXhwIjoxNzAzMzcwMjAxLCJzdWIiOiI0NzEzMzM3MjI4MTAwODk0OTIifQ.4aAH0a34DO-ew4AtjvDQUyUx4AH-HVrz3VZfmksemco
+
+###
+
+# @name get_auth_url
+GET {{baseUrl}}/discord/url

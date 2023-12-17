@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Login" (
+CREATE TABLE "logins" (
     "id" TEXT NOT NULL,
     "access_token" TEXT NOT NULL,
     "refresh_token" TEXT NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE "Login" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Login_id_key" ON "Login"("id");
+CREATE UNIQUE INDEX "logins_id_key" ON "logins"("id");

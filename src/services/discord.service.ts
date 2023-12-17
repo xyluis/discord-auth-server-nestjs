@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
-import { z } from 'zod';
+import { Injectable } from '@nestjs/common'
+import axios, { AxiosInstance } from 'axios'
+import { z } from 'zod'
 
-import { getGuildIconUrl } from '../utils/get-guild-icon-url.util';
+import { getGuildIconUrl } from '../utils/get-guild-icon-url.util'
 
 const tokenResponse = z.object({
   access_token: z.string(),
   refresh_token: z.string(),
   expires_in: z.number(),
-});
+})
 
 @Injectable()
 export class DiscordService {
-  private api: AxiosInstance;
+  private api: AxiosInstance
 
   constructor() {
     this.api = axios.create({
@@ -20,7 +20,7 @@ export class DiscordService {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-    });
+    })
   }
 
   async getAccessToken(code: string) {
@@ -30,9 +30,9 @@ export class DiscordService {
       grant_type: 'authorization_code',
       code,
       redirect_uri: process.env.DISCORD_REDIRECT_URI,
-    });
+    })
 
-    return tokenResponse.parse(data);
+    return tokenResponse.parse(data)
   }
 
   async getUser(token: string) {
@@ -40,17 +40,17 @@ export class DiscordService {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
 
     const userSchema = z.object({
       id: z.string(),
       username: z.string(),
       discriminator: z.string(),
       avatar: z.string().nullable(),
-      avatar_decoration: z.string().nullable(),
-    });
+      avatar_decoration: z.string().optional(),
+    })
 
-    return userSchema.parse(data);
+    return userSchema.parse(data)
   }
 
   async getGuilds(token: string) {
@@ -65,7 +65,7 @@ export class DiscordService {
           Authorization: `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
         },
       }),
-    ]);
+    ])
 
     const guildSchema = z.object({
       id: z.string(),
@@ -73,35 +73,35 @@ export class DiscordService {
       owner: z.boolean(),
       icon: z.string().nullable(),
       permissions: z.coerce.number(),
-    });
+    })
 
-    const guildsSchema = z.array(guildSchema);
+    const guildsSchema = z.array(guildSchema)
 
-    const userGuilds = guildsSchema.parse(guildsResponse.data);
-    const botGuilds = guildsSchema.parse(botGuildsResponse.data);
+    const userGuilds = guildsSchema.parse(guildsResponse.data)
+    const botGuilds = guildsSchema.parse(botGuildsResponse.data)
 
     const guilds =
       userGuilds
         .filter((guild) => {
-          return botGuilds.find((botGuild) => botGuild.id === guild.id);
+          return botGuilds.find((botGuild) => botGuild.id === guild.id)
         })
         .map((guild) => ({
           ...guild,
           canManage: (guild.permissions & (1 << 5)) !== 0 || guild.owner,
           iconUrl: getGuildIconUrl(guild.id, guild.icon),
-        })) ?? [];
+        })) ?? []
 
-    return guilds;
+    return guilds
   }
 
-  async refreshAccessToken(refresh_token: string) {
+  async refreshAccessToken(refreshToken: string) {
     const { data } = await this.api.post('/oauth2/token', {
       client_id: process.env.DISCORD_CLIENT_ID,
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'refresh_token',
-      refresh_token,
-    });
+      refresh_token: refreshToken,
+    })
 
-    return tokenResponse.parse(data);
+    return tokenResponse.parse(data)
   }
 }

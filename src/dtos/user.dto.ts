@@ -1,12 +1,12 @@
 export interface UserDTO {
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
+  accessToken: string
+  expiresIn: number
+  refreshToken: string
 }
 
 export interface JWTUserDTO {
-  tag: string;
-  decorationUrl: string | null;
-  avatarUrl: string;
-  sub: string;
+  tag: string
+  decorationUrl: string | null
+  avatarUrl: string
+  sub: string
 }
