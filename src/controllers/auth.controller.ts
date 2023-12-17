@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
+import { URL } from 'node:url'
 
 import { AuthService } from '../services/auth.service'
 import { DiscordService } from '../services/discord.service'
@@ -54,14 +55,13 @@ export class AuthController {
       code: z.string().optional(),
     })
 
+    const redirectUrl = new URL(process.env.CLIENT_REDIRECT_URI)
     const { code } = querySchema.parse(request.query)
 
     if (!code) {
       return reply
       .status(302)
-      .redirect(
-        process.env.CLIENT_REDIRECT_URI
-      )
+      .redirect(redirectUrl.href)
     }
 
     const {
@@ -76,11 +76,12 @@ export class AuthController {
       refreshToken,
     })
 
+    redirectUrl.searchParams.append('token', token)
+    redirectUrl.searchParams.append('expiration', expiration.toString())
+
     return reply
       .status(302)
-      .redirect(
-        `${process.env.CLIENT_REDIRECT_URI}?token=${token}&expiration=${expiration}`,
-      )
+      .redirect(redirectUrl.href)
   }
 
   @Get('verify')
