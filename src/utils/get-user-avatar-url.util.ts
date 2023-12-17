@@ -6,13 +6,10 @@ const DefaultAvatars: Record<string, string> = {
   RED: '1cbd08c76f8af6dddce02c5138971129',
 }
 
-export function getUserAvatarUrl(
-  id: string,
-  discriminator: string,
-  avatar: string | null,
-) {
+export function getUserAvatarUrl(id: string, avatar: string | null) {
   const avatars = Object.keys(DefaultAvatars)
-  const defaultAvatar = avatars[Number(discriminator) % avatars.length]
+  const defaultAvatar =
+    DefaultAvatars[avatars[(avatars.length * Math.random()) << 0]]
 
   const userDefaultAvatar = `https://discordapp.com/assets/${DefaultAvatars[defaultAvatar]}.png`
 
