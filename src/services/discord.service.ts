@@ -49,8 +49,8 @@ export class DiscordService {
       discriminator: z.string(),
       avatar: z.string().nullable(),
       avatar_decoration_data: z.object({
-        asset: z.string(),
-        sku_id: z.string()
+        asset: z.string().optional(),
+        sku_id: z.string().optional()
       }).optional(),
     })
 
