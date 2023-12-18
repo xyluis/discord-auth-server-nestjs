@@ -17,6 +17,8 @@ export class AuthService {
   async getUser({ accessToken, expiresIn, refreshToken }: UserDTO) {
     const user = await this.discord.getUser(accessToken)
 
+    console.log(user)
+
     await this.login.getLogin({
       accessToken,
       expiresIn,
@@ -29,8 +31,8 @@ export class AuthService {
         username: user.username,
         globalName: user.global_name ?? 'User',
         decorationUrl:
-          user.avatar_decoration &&
-          `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration}.png?size=160&passthrough=true`,
+          user.avatar_decoration_data ?
+          `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}.png` : null,
         avatarUrl: getUserAvatarUrl(user.id, user.avatar),
       },
       {

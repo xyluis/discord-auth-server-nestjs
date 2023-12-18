@@ -48,8 +48,13 @@ export class DiscordService {
       global_name: z.string().optional(),
       discriminator: z.string(),
       avatar: z.string().nullable(),
-      avatar_decoration: z.string().optional(),
+      avatar_decoration_data: z.object({
+        asset: z.string(),
+        sku_id: z.string()
+      }).optional(),
     })
+
+    console.log(data)
 
     return userSchema.parse(data)
   }
